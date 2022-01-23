@@ -67,7 +67,17 @@ class MainViewController: UIViewController {
     }
     
     @IBAction private func startSorting(_ sender: UIButton) {
-        sortService?.sortStep(ParkBenchTimer())
+        sortService?.sortStep(ParkBenchTimer(), { [weak self] timeSpent in
+            let alertController = UIAlertController(
+                title: "Data was sorted !",
+                message: "Time spent: \(timeSpent)",
+                preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(
+                title: "Ok",
+                style: .cancel,
+                handler: nil))
+            self?.present(alertController, animated: true)
+        })
     }
     
     // MARK: - MAIN ACTIONS

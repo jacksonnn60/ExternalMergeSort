@@ -40,45 +40,36 @@ final class ExternalSortService {
     
     // MARK: - DATA CREATING
     
-    private var nodeIndex = 0
-    private var lastNodeIndex = 0
-    
-    private var elementIndex = 0
-    private var elements: [Int] = []
-    
-    func createSortNodes(block: () -> ()) {
-        guard elements.count != RAM_SIZE else {
-            let sortingNode = SortingNode(
-                fileName: "sort_file_\(nodeIndex)",
-                dataList: elements,
-                currentIndex: 0)
-            sortingNodes.append(sortingNode)
-            nodeIndex += 1
-            elements = []
-            createSortNodes(block: block)
-            return
-        }
-        
-        guard originData != [] else {
-            if !elements.isEmpty {
-                let sortingNode = SortingNode(
+    func createSortNodes(finishNodeCreating: () -> ()) {
+        var elements: [Int] = []
+        var nodeIndex = 0
+        while originData != [] {
+            if elements.count == RAM_SIZE {
+                
+                sortingNodes.append(SortingNode(
                     fileName: "sort_file_\(nodeIndex)",
                     dataList: elements,
-                    currentIndex: 0)
-                sortingNodes.append(sortingNode)
+                    currentIndex: 0))
+                elements = []
+                nodeIndex += 1
+                
+            } else {
+                elements.append(Int(originData.first!)!)
+                originData.removeFirst()
             }
-            writeSortNodesToFiles()
-            block()
-            return
         }
         
-        guard let string = originData.first,
-              let element = Int(string) else {
-                  return
-              }
-        elements.append(element)
-        originData.removeFirst()
-        createSortNodes(block: block)
+        if !elements.isEmpty {
+            sortingNodes.append(SortingNode(
+                fileName: "sort_file_\(nodeIndex)",
+                dataList: elements,
+                currentIndex: 0))
+            elements = []
+            nodeIndex += 1
+        }
+        
+        writeSortNodesToFiles()
+        finishNodeCreating()
     }
     
     func cleanTrash(_ endBlock: (() -> ())? = nil) {
@@ -96,9 +87,10 @@ final class ExternalSortService {
     }
     
     // MARK: -
-    func sortStep(_ timer: ParkBenchTimer) {
-        var array0 = getData(fromFile: secondFileIndex)
-        var array1 = getData(fromFile: firstFileIndex)
+    func sortStep(_ timer: ParkBenchTimer, _ completed: ((CFAbsoluteTime) -> ())? = nil) {
+        
+        var array0 = getData(fromFile: firstFileIndex)
+        var array1 = getData(fromFile: secondFileIndex)
         
         let sortedData = scaleMergeSort(&array0, &array1)
         
@@ -110,13 +102,15 @@ final class ExternalSortService {
         secondFileIndex += 1
         
         guard secondFileIndex != sortingNodes.count else {
-            print("Sorting was done for \(timer.stop()) seconds.")
+            print("\n|=============================================|")
+            print("\n|Sorting was done for \(timer.stop()) seconds.")
+            print("\n|=============================================|")
+            completed?(timer.stop())
             return
         }
         
-        /// KONTYNUACJA SORTOWANIA PRZEZ REKURENCJE
         sortedArraySize += RAM_SIZE
-        sortStep(timer)
+        sortStep(timer, completed)
     }
     
     // MARK: - MERGE SORT FUNCTION
