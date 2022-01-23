@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -16,18 +17,25 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="space_background" translatesAutoresizingMaskIntoConstraints="NO" id="1b2-k2-Ocs">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="EXTERNAL MERGE SORT" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZoK-W7-gtO">
-                                <rect key="frame" x="110" y="437.5" width="194" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
+                                <rect key="frame" x="42.5" y="430.5" width="329" height="35"/>
+                                <fontDescription key="fontDescription" type="italicSystem" pointSize="29"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="1b2-k2-Ocs" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="AGT-XQ-MvP"/>
                             <constraint firstItem="ZoK-W7-gtO" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="KLf-4h-gGf"/>
+                            <constraint firstAttribute="bottom" secondItem="1b2-k2-Ocs" secondAttribute="bottom" id="N5m-Fc-yFp"/>
                             <constraint firstItem="ZoK-W7-gtO" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="YEi-5c-RBi"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="1b2-k2-Ocs" secondAttribute="trailing" id="e8j-fx-Hdk"/>
+                            <constraint firstItem="1b2-k2-Ocs" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="zdd-oF-9Lk"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -37,6 +45,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="space_background" width="540" height="960"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
