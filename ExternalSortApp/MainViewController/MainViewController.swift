@@ -74,7 +74,7 @@ class MainViewController: UIViewController {
     private func randomNumbers(amount: Int, min: Int, max: Int) -> [String] {
         var array = [String]()
         var index = 0
-        while index <= amount {
+        while index <= amount - 1 {
             array.append(String(Int.random(in: min...max)))
             index += 1
         }

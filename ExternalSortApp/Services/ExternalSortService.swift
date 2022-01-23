@@ -9,7 +9,7 @@ import Foundation
 
 final class ExternalSortService {
     
-    private let firstFileIndex = 0
+    private var firstFileIndex = 0
     private var secondFileIndex = 1
     private var sortedArraySize = 10
     
@@ -20,12 +20,12 @@ final class ExternalSortService {
     // MARK: -
     
     let fileService: FileService
-    private let originData: [String]
+    private var originData: [String]
     
     /// Dla naszego przykładu stworzymy sobie rozmiar RAM (max ilość liczb jaka może posortować nasza pamięć)...
     private let RAM_SIZE = 5
     
-    private var INPUT_DATA_SIZE: Int?
+    private var INPUT_DATA_SIZE = 0
     
     // MARK: - INITIALIZATING
     
@@ -39,50 +39,46 @@ final class ExternalSortService {
     }
     
     // MARK: - DATA CREATING
-    func createSortNodes(block: () -> Void) {
-        let timer = ParkBenchTimer()
-
-        guard let INPUT_DATA_SIZE = INPUT_DATA_SIZE else {
+    
+    private var nodeIndex = 0
+    private var lastNodeIndex = 0
+    
+    private var elementIndex = 0
+    private var elements: [Int] = []
+    
+    func createSortNodes(block: () -> ()) {
+        guard elements.count != RAM_SIZE else {
+            let sortingNode = SortingNode(
+                fileName: "sort_file_\(nodeIndex)",
+                dataList: elements,
+                currentIndex: 0)
+            sortingNodes.append(sortingNode)
+            nodeIndex += 1
+            elements = []
+            createSortNodes(block: block)
             return
         }
-
-        if INPUT_DATA_SIZE < RAM_SIZE {
-            
-        } else {
-            let subfilesCount = INPUT_DATA_SIZE / RAM_SIZE
-            var subfileIndex = 0
-            var elementIndex = 0
-            var sectionCapacity = 0
-            
-            while subfileIndex <= subfilesCount - 1 {
-                var dataList = [Int]()
-                
-                while elementIndex <= sectionCapacity + RAM_SIZE {
-                    guard let element = Int(originData[elementIndex]) else {
-                        return
-                    }
-                    dataList.append(element)
-                    if elementIndex == sectionCapacity + RAM_SIZE {
-                        sectionCapacity += RAM_SIZE
-                        break
-                    }
-                    elementIndex += 1
-                }
-                
-                let sortNode = SortingNode(
-                    fileName: "sort_file_\(subfileIndex)",
-                    dataList: dataList,
+        
+        guard originData != [] else {
+            if !elements.isEmpty {
+                let sortingNode = SortingNode(
+                    fileName: "sort_file_\(nodeIndex)",
+                    dataList: elements,
                     currentIndex: 0)
-                
-                sortingNodes.append(sortNode)
-                subfileIndex += 1
+                sortingNodes.append(sortingNode)
             }
+            writeSortNodesToFiles()
+            block()
+            return
         }
         
-        writeSortNodesToFiles()
-        block()
-        
-        print("\nData was created for \(timer.stop()) seconds.")
+        guard let string = originData.first,
+              let element = Int(string) else {
+                  return
+              }
+        elements.append(element)
+        originData.removeFirst()
+        createSortNodes(block: block)
     }
     
     func cleanTrash(_ endBlock: (() -> ())? = nil) {
