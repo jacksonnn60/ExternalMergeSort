@@ -89,16 +89,14 @@ final class ExternalSortService {
     // MARK: -
     func sortStep(_ timer: ParkBenchTimer, _ completed: ((CFAbsoluteTime) -> ())? = nil) {
         
-        var array0 = getData(fromFile: firstFileIndex)
-        var array1 = getData(fromFile: secondFileIndex)
+        var array0 = getData(fromFile: sortingNodes.first!.fileName)
+        var array1 = getData(fromFile: (sortingNodes.last!.fileName))
         
         let sortedData = scaleMergeSort(&array0, &array1)
         
-        delete(file: firstFileIndex)
         delete(file: secondFileIndex)
-        
-        create(file: sortingNodes[firstFileIndex].fileName, stringData: sortedData.map { String($0) }.joined(separator: "\n"))
-                
+        fileService.write(string: sortedData.map { String($0) }.joined(separator: "\n"), to: sortingNodes.first!.fileName)
+
         secondFileIndex += 1
         
         guard secondFileIndex != sortingNodes.count else {
@@ -141,9 +139,9 @@ final class ExternalSortService {
     }
     
     // MARK: - HELPING FUNCTIONS
-    private func getData(fromFile index: Int) -> [Int] {
+    private func getData(fromFile name: String) -> [Int] {
         guard let fileContent = fileService.read(
-            file: sortingNodes[index].fileName) else {
+            file: name) else {
                 return []
             }
         let stringFileContent = fileContent.split(separator: "\n")
@@ -156,10 +154,5 @@ final class ExternalSortService {
         } catch {
             print(error.localizedDescription)
         }
-    }
-    
-    private func create(file fileName: String, stringData: String) {
-        fileService.create(file: fileName)
-        fileService.write(string: stringData, to: fileName)
     }
 }
